@@ -1,6 +1,13 @@
 
 # Assurelink Plugin (modified form LiftMaster)
 
+Installation
+Install homebridge using: npm install -g homebridge
+Install this plugin using: npm install -g homebridge-assurelink
+Update your configuration file. See the sample below.
+
+Configuration:
+
 Example config.json:
 
     {
