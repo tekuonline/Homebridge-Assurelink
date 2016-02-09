@@ -4,13 +4,13 @@ var types;
 module.exports = function(homebridge) {
   types = homebridge.hapLegacyTypes;
 
-  homebridge.registerAccessory("homebridge-liftmaster", "LiftMaster", LiftMasterAccessory);
+  homebridge.registerAccessory("homebridge-assurelink", "Assurelink", AssurelinkAccessory);
 }
 
 // This seems to be the "id" of the official Assurelink iOS app
 var APP_ID = "eU97d99kMG4t3STJZO/Mu2wt69yTQwM0WXZA5oZ74/ascQ2xQrLD/yjeVhEQccBZ"
 
-function LiftMasterAccessory(log, config) {
+function AssurelinkAccessory(log, config) {
   this.log = log;
   this.name = config["name"];
   this.username = config["username"];
@@ -18,7 +18,7 @@ function LiftMasterAccessory(log, config) {
   this.requiredDeviceId = config["requiredDeviceId"];
 }
 
-LiftMasterAccessory.prototype = {
+AssurelinkAccessory.prototype = {
 
   setState: function(state) {
     this.targetState = state;
@@ -47,7 +47,7 @@ LiftMasterAccessory.prototype = {
       culture: "en"
     };
 
-    // login to liftmaster
+    // login to Assurelink
     request.get({
       url: "https://craftexternal.myqdevice.com/api/user/validatewithculture",
       qs: query
@@ -81,7 +81,7 @@ LiftMasterAccessory.prototype = {
 
     // some necessary duplicated info in the headers
     var headers = {
-      MyQApplicationId: APP_ID,
+      AssurelinkApplicationId: APP_ID,
       SecurityToken: this.securityToken
     };
 
@@ -103,11 +103,11 @@ LiftMasterAccessory.prototype = {
         for (var i=0; i<devices.length; i++) {
           var device = devices[i];
 
-          if (device["MyQDeviceTypeName"] == "GarageDoorOpener" || device["MyQDeviceTypeName"] == "VGDO") {
+          if (device["AssurelinkDeviceTypeName"] == "GarageDoorOpener" || device["AssurelinkDeviceTypeName"] == "VGDO") {
 
             // If we haven't explicity specified a door ID, we'll loop to make sure we don't have multiple openers, which is confusing
             if (!that.requiredDeviceId) {
-              var thisDeviceId = device.MyQDeviceId;
+              var thisDeviceId = device.AssurelinkDeviceId;
               var thisDoorName = "Unknown";
               var thisDoorState = 2;
 
@@ -127,24 +127,34 @@ LiftMasterAccessory.prototype = {
             }
 
             // We specified a door ID, sanity check to make sure it's the one we expected
-            else if (that.requiredDeviceId == device.MyQDeviceId) {
-              that.deviceId = device.MyQDeviceId;
-              break;
+            else if (that.requiredDeviceId == device.AssurelinkDeviceId) {
+              // Added attribute loop here to pull doorstate
+ +              var thisDeviceId = device.AssurelinkDeviceId;
+ +              
+ +              for (var j = 0; j < device.Attributes.length; j ++) {
+ +                var thisAttributeSet = device.Attributes[j];
+ +                if (thisAttributeSet.AttributeDisplayName == "doorstate") {
+ +                  thisDoorState = thisAttributeSet.Value;
+ +              }
+ +            }
+ +            that.deviceId = device.AssurelinkDeviceId;
+ +            that.deviceState = thisDoorState;
+ +            break;
             }
           }
         }
 
         // If we have multiple found doors, refuse to proceed
         if (foundDoors.length > 1) {
-          that.log("WARNING: You have multiple doors on your MyQ account.");
+          that.log("WARNING: You have multiple doors on your Assurelink account.");
           that.log("WARNING: Specify the ID of the door you want to control using the 'requiredDeviceId' property in your config.json file.");
-          that.log("WARNING: You can have multiple liftmaster accessories to cover your multiple doors");
+          that.log("WARNING: You can have multiple Assurelink accessories to cover your multiple doors");
 
           for (var j = 0; j < foundDoors.length; j++) {
             that.log("Found Door: " + foundDoors[j]);
           }
 
-          throw "FATAL: Please specify which specific door this Liftmaster accessory should control - you have multiples on your account";
+          throw "Please specify which specific door this Assurelink accessory should control - you have multiples on your account";
 
         }
 
@@ -178,7 +188,7 @@ LiftMasterAccessory.prototype = {
   setTargetState: function() {
 
     var that = this;
-    var liftmasterState = (this.targetState + "") == "1" ? "0" : "1";
+    var AssurelinkState = (this.targetState + "") == "1" ? "0" : "1";
 
     // querystring params
     var query = {
@@ -189,20 +199,20 @@ LiftMasterAccessory.prototype = {
 
     // some necessary duplicated info in the headers
     var headers = {
-      MyQApplicationId: APP_ID,
+      AssurelinkApplicationId: APP_ID,
       SecurityToken: this.securityToken
     };
 
     // PUT request body
     var body = {
       AttributeName: "desireddoorstate",
-      AttributeValue: liftmasterState,
+      AttributeValue: AssurelinkState,
       ApplicationId: APP_ID,
       SecurityToken: this.securityToken,
-      MyQDeviceId: this.deviceId
+      AssurelinkDeviceId: this.deviceId
     };
 
-    // send the state request to liftmaster
+    // send the state request to Assurelink
     request.put({
       url: "https://craftexternal.myqdevice.com/api/v4/DeviceAttribute/PutDeviceAttribute",
       qs: query,
@@ -243,7 +253,7 @@ LiftMasterAccessory.prototype = {
         onUpdate: null,
         perms: ["pr"],
         format: "string",
-        initialValue: "LiftMaster",
+        initialValue: "Assurelink",
         supportEvents: false,
         supportBonjour: false,
         manfDescription: "Manufacturer",
@@ -300,7 +310,7 @@ LiftMasterAccessory.prototype = {
         initialValue: 0,
         supportEvents: false,
         supportBonjour: false,
-        manfDescription: "BlaBla",
+        manfDescription: "SEARS HOLDINGS",
         designedMinValue: 0,
         designedMaxValue: 4,
         designedMinStep: 1,
@@ -313,7 +323,7 @@ LiftMasterAccessory.prototype = {
         initialValue: 1,
         supportEvents: false,
         supportBonjour: false,
-        manfDescription: "BlaBla",
+        manfDescription: "SEARS HOLDING",
         designedMinValue: 0,
         designedMaxValue: 1,
         designedMinStep: 1,
@@ -326,7 +336,7 @@ LiftMasterAccessory.prototype = {
         initialValue: false,
         supportEvents: false,
         supportBonjour: false,
-        manfDescription: "BlaBla"
+        manfDescription: "SEARS HOLDING"
       }]
     }];
   }

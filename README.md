@@ -1,5 +1,5 @@
 
-# Assurelink Plugin (modified form LiftMaster)
+# Assurelink Plugin (modified form Liftmaster)
 
 Installation
 Install homebridge using: npm install -g homebridge
@@ -13,7 +13,7 @@ Example config.json:
     {
       "accessories": [
         {
-          "accessory": "LiftMaster",
+          "accessory": "Assurelink",
           "name": "Garage Door",
           "username": "<your Assurelink email address>",
           "password": "<your Assurelink password>"
@@ -26,7 +26,7 @@ If you have multiple garage doors connected to your Assurelink account, the plug
     {
       "accessories": [
         {
-          "accessory": "LiftMaster",
+          "accessory": "Assurelink",
           "name": "Side Garage Door",
           "username": "<your Assurelink email address>",
           "password": "<your Assurelink password>",

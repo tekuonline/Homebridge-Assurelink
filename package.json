@@ -1,6 +1,6 @@
 {
   "name": "homebridge-assurelink",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "description": "Assurelink garage door opener support for Homebridge: https://github.com/nfarina/homebridge",
   "license": "ISC",
   "keywords": [
