@@ -15,7 +15,7 @@ function AssurelinkAccessory(log, config) {
   this.name = config["name"];
   this.username = config["username"];
   this.password = config["password"];
-  this.requiredDeviceId = config["requiredDeviceId"];
+  this.deviceID = config["deviceID"];
 }
 
 AssurelinkAccessory.prototype = {
@@ -125,9 +125,9 @@ AssurelinkAccessory.prototype = {
             }
 
             // We specified a door ID, sanity check to make sure it's the one we expected
-            else if (that.deviceId == device.AssurelinkDeviceId) {
+            else if (that.deviceID == device.AssurelinkDeviceId) {
               // Added attribute loop here to pull doorstate
-               var thisDeviceId = device.AssurelinkDeviceId;
+               var thisDeviceId= device.AssurelinkDeviceId;
               
               for (var j = 0; j < device.Attributes.length; j ++) {
                 var thisAttributeSet = device.Attributes[j];
