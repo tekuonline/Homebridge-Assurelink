@@ -102,11 +102,9 @@ AssurelinkAccessory.prototype = {
         // look through the array of devices for an opener
         for (var i=0; i<devices.length; i++) {
           var device = devices[i];
-
-          if (device["AssurelinkDeviceTypeName"] == "GarageDoorOpener" || device["AssurelinkDeviceTypeName"] == "VGDO") {
-
+          if (device["AssurelinkDeviceTypeName"] == "Garage Door Opener WGDO" || device["AssurelinkDeviceTypeName"] == "GarageDoorOpener" || device["MyQDeviceTypeName"] == "VGDO") {
             // If we haven't explicity specified a door ID, we'll loop to make sure we don't have multiple openers, which is confusing
-            if (!that.requiredDeviceId) {
+            if (!that.deviceID) {
               var thisDeviceId = device.AssurelinkDeviceId;
               var thisDoorName = "Unknown";
               var thisDoorState = 2;
@@ -127,7 +125,7 @@ AssurelinkAccessory.prototype = {
             }
 
             // We specified a door ID, sanity check to make sure it's the one we expected
-            else if (that.requiredDeviceId == device.AssurelinkDeviceId) {
+            else if (that.deviceId == device.AssurelinkDeviceId) {
               // Added attribute loop here to pull doorstate
                var thisDeviceId = device.AssurelinkDeviceId;
               
