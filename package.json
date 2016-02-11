@@ -1,17 +1,20 @@
 {
   "name": "homebridge-assurelink",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Assurelink garage door opener support for Homebridge: https://github.com/nfarina/homebridge",
+  "name": "homebridge-liftmaster",
+  "version": "0.0.2",
+  "description": "LiftMaster support for Homebridge: https://github.com/nfarina/homebridge",
   "license": "ISC",
   "keywords": [
     "homebridge-plugin"
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/tekuonline/homebridge-assurelink.git"
+    "url": "git://github.com/nfarina/homebridge-liftmaster.git"
   },
   "bugs": {
-    "url": "http://github.com/tekuonline/homebridge-assurelink/issues"
+    "url": "http://github.com/nfarina/homebridge-liftmaster/issues"
   },
   "engines": {
     "node": ">=0.12.0",
@@ -19,11 +22,5 @@
   },
   "dependencies": {
     "request": "2.49.x"
-  },
-  "homepage": "https://github.com/tekuonline/homebridge-assurelink#readme",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Tek Nepal <np.teku@gmail.com> (https://teknepal.com) modified from liftmaster"
+  }
 }

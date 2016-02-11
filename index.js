@@ -4,21 +4,21 @@ var types;
 module.exports = function(homebridge) {
   types = homebridge.hapLegacyTypes;
 
-  homebridge.registerAccessory("homebridge-assurelink", "Assurelink", AssurelinkAccessory);
+  homebridge.registerAccessory("homebridge-liftmaster", "LiftMaster", LiftMasterAccessory);
 }
 
 // This seems to be the "id" of the official Assurelink iOS app
 var APP_ID = "eU97d99kMG4t3STJZO/Mu2wt69yTQwM0WXZA5oZ74/ascQ2xQrLD/yjeVhEQccBZ"
 
-function AssurelinkAccessory(log, config) {
+function LiftMasterAccessory(log, config) {
   this.log = log;
   this.name = config["name"];
   this.username = config["username"];
   this.password = config["password"];
-  this.deviceID = config["deviceID"];
+  this.requiredDeviceId = config["requiredDeviceId"];
 }
 
-AssurelinkAccessory.prototype = {
+LiftMasterAccessory.prototype = {
 
   setState: function(state) {
     this.targetState = state;
@@ -47,7 +47,7 @@ AssurelinkAccessory.prototype = {
       culture: "en"
     };
 
-    // login to Assurelink
+    // login to liftmaster
     request.get({
       url: "https://craftexternal.myqdevice.com/api/user/validatewithculture",
       qs: query
@@ -81,7 +81,7 @@ AssurelinkAccessory.prototype = {
 
     // some necessary duplicated info in the headers
     var headers = {
-      AssurelinkApplicationId: APP_ID,
+      MyQApplicationId: APP_ID,
       SecurityToken: this.securityToken
     };
 
@@ -102,10 +102,12 @@ AssurelinkAccessory.prototype = {
         // look through the array of devices for an opener
         for (var i=0; i<devices.length; i++) {
           var device = devices[i];
-          if (device["AssurelinkDeviceTypeName"] == "Garage Door Opener WGDO" || device["AssurelinkDeviceTypeName"] == "GarageDoorOpener" || device["MyQDeviceTypeName"] == "VGDO") {
+
+          if (device["MyQDeviceTypeName"] == "GarageDoorOpener" || device["MyQDeviceTypeName"] == "VGDO") {
+
             // If we haven't explicity specified a door ID, we'll loop to make sure we don't have multiple openers, which is confusing
-            if (!that.deviceID) {
-              var thisDeviceId = device.AssurelinkDeviceId;
+            if (!that.requiredDeviceId) {
+              var thisDeviceId = device.MyQDeviceId;
               var thisDoorName = "Unknown";
               var thisDoorState = 2;
 
@@ -125,34 +127,24 @@ AssurelinkAccessory.prototype = {
             }
 
             // We specified a door ID, sanity check to make sure it's the one we expected
-            else if (that.deviceID == device.AssurelinkDeviceId) {
-              // Added attribute loop here to pull doorstate
-               var thisDeviceId= device.AssurelinkDeviceId;
-              
-              for (var j = 0; j < device.Attributes.length; j ++) {
-                var thisAttributeSet = device.Attributes[j];
-                if (thisAttributeSet.AttributeDisplayName == "doorstate") {
-                  thisDoorState = thisAttributeSet.Value;
-              }
-            }
-            that.deviceId = device.AssurelinkDeviceId;
-            that.deviceState = thisDoorState;
-             break;
+            else if (that.requiredDeviceId == device.MyQDeviceId) {
+              that.deviceId = device.MyQDeviceId;
+              break;
             }
           }
         }
 
         // If we have multiple found doors, refuse to proceed
         if (foundDoors.length > 1) {
-          that.log("WARNING: You have multiple doors on your Assurelink account.");
+          that.log("WARNING: You have multiple doors on your MyQ account.");
           that.log("WARNING: Specify the ID of the door you want to control using the 'requiredDeviceId' property in your config.json file.");
-          that.log("WARNING: You can have multiple Assurelink accessories to cover your multiple doors");
+          that.log("WARNING: You can have multiple liftmaster accessories to cover your multiple doors");
 
           for (var j = 0; j < foundDoors.length; j++) {
             that.log("Found Door: " + foundDoors[j]);
           }
 
-          throw "Please specify which specific door this Assurelink accessory should control - you have multiples on your account";
+          throw "FATAL: Please specify which specific door this Liftmaster accessory should control - you have multiples on your account";
 
         }
 
@@ -186,7 +178,7 @@ AssurelinkAccessory.prototype = {
   setTargetState: function() {
 
     var that = this;
-    var AssurelinkState = (this.targetState + "") == "1" ? "0" : "1";
+    var liftmasterState = (this.targetState + "") == "1" ? "0" : "1";
 
     // querystring params
     var query = {
@@ -197,20 +189,20 @@ AssurelinkAccessory.prototype = {
 
     // some necessary duplicated info in the headers
     var headers = {
-      AssurelinkApplicationId: APP_ID,
+      MyQApplicationId: APP_ID,
       SecurityToken: this.securityToken
     };
 
     // PUT request body
     var body = {
       AttributeName: "desireddoorstate",
-      AttributeValue: AssurelinkState,
+      AttributeValue: liftmasterState,
       ApplicationId: APP_ID,
       SecurityToken: this.securityToken,
-      AssurelinkDeviceId: this.deviceId
+      MyQDeviceId: this.deviceId
     };
 
-    // send the state request to Assurelink
+    // send the state request to liftmaster
     request.put({
       url: "https://craftexternal.myqdevice.com/api/v4/DeviceAttribute/PutDeviceAttribute",
       qs: query,
@@ -251,7 +243,7 @@ AssurelinkAccessory.prototype = {
         onUpdate: null,
         perms: ["pr"],
         format: "string",
-        initialValue: "Assurelink",
+        initialValue: "LiftMaster",
         supportEvents: false,
         supportBonjour: false,
         manfDescription: "Manufacturer",
@@ -308,7 +300,7 @@ AssurelinkAccessory.prototype = {
         initialValue: 0,
         supportEvents: false,
         supportBonjour: false,
-        manfDescription: "SEARS HOLDINGS",
+        manfDescription: "Craftsman",
         designedMinValue: 0,
         designedMaxValue: 4,
         designedMinStep: 1,
@@ -321,7 +313,7 @@ AssurelinkAccessory.prototype = {
         initialValue: 1,
         supportEvents: false,
         supportBonjour: false,
-        manfDescription: "SEARS HOLDING",
+        manfDescription: "Craftsman",
         designedMinValue: 0,
         designedMaxValue: 1,
         designedMinStep: 1,
@@ -334,7 +326,7 @@ AssurelinkAccessory.prototype = {
         initialValue: false,
         supportEvents: false,
         supportBonjour: false,
-        manfDescription: "SEARS HOLDING"
+        manfDescription: "Craftsman"
       }]
     }];
   }
