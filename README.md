@@ -6,7 +6,7 @@ Example config.json:
     {
       "accessories": [
         {
-          "accessory": "Assurelink",
+          "accessory": "LiftMaster",
           "name": "Garage Door",
           "username": "<your Assurelink email address>",
           "password": "<your Assurelink password>"
