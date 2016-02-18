@@ -4,7 +4,7 @@ var types;
 module.exports = function(homebridge) {
   types = homebridge.hapLegacyTypes;
 
-  homebridge.registerAccessory("homebridge-liftmaster", "LiftMaster", LiftMasterAccessory);
+  homebridge.registerAccessory("homebridge-assurelink", "Assurelink", LiftMasterAccessory);
 }
 
 // This seems to be the "id" of the official Assurelink iOS app
@@ -136,15 +136,15 @@ LiftMasterAccessory.prototype = {
 
         // If we have multiple found doors, refuse to proceed
         if (foundDoors.length > 1) {
-          that.log("WARNING: You have multiple doors on your MyQ account.");
+          that.log("WARNING: You have multiple doors on your Assurelink account.");
           that.log("WARNING: Specify the ID of the door you want to control using the 'requiredDeviceId' property in your config.json file.");
-          that.log("WARNING: You can have multiple liftmaster accessories to cover your multiple doors");
+          that.log("WARNING: You can have multiple Assurelink accessories to cover your multiple doors");
 
           for (var j = 0; j < foundDoors.length; j++) {
             that.log("Found Door: " + foundDoors[j]);
           }
 
-          throw "FATAL: Please specify which specific door this Liftmaster accessory should control - you have multiples on your account";
+          throw "FATAL: Please specify which specific door this Assurelink accessory should control - you have multiples on your account";
 
         }
 
@@ -236,14 +236,14 @@ LiftMasterAccessory.prototype = {
         initialValue: this.name,
         supportEvents: false,
         supportBonjour: false,
-        manfDescription: "Name of the accessory",
+        manfDescription: "Craftsman INC",
         designedMaxLength: 255
       },{
         cType: types.MANUFACTURER_CTYPE,
         onUpdate: null,
         perms: ["pr"],
         format: "string",
-        initialValue: "LiftMaster",
+        initialValue: "Assurelink",
         supportEvents: false,
         supportBonjour: false,
         manfDescription: "Manufacturer",

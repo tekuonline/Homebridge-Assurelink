@@ -1,6 +1,6 @@
 {
   "name": "homebridge-assurelink",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Assurelink garage door opener support for Homebridge: https://github.com/nfarina/homebridge",
   "license": "ISC",
   "keywords": [
@@ -26,4 +26,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Tek Nepal <np.teku@gmail.com> (https://teknepal.com) modified from liftmaster"
+  },
+  "Credit": "@nfarina (for his from liftmaster plugin)"
 }
