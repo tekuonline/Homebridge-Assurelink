@@ -25,7 +25,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Tek Nepal <np.teku@gmail.com> (https://teknepal.com) modified from liftmaster"
-  },
-  "Credit": "@nfarina (for his from liftmaster plugin)"
+  "author": "Tek Nepal <np.teku@gmail.com> (https://teknepal.com) modified from liftmaster Thanks to @nfarina"
 }
