@@ -15,7 +15,7 @@ function LiftMasterAccessory(log, config) {
   this.name = config["name"];
   this.username = config["username"];
   this.password = config["password"];
-  this.requiredDeviceId = config["requiredDeviceId"];
+  this.deviceID = config["deviceID"];
 }
 
 LiftMasterAccessory.prototype = {
@@ -106,7 +106,7 @@ LiftMasterAccessory.prototype = {
           if (device["MyQDeviceTypeName"] == "GarageDoorOpener" || device["MyQDeviceTypeName"] == "VGDO") {
 
             // If we haven't explicity specified a door ID, we'll loop to make sure we don't have multiple openers, which is confusing
-            if (!that.requiredDeviceId) {
+            if (!that.DeviceID) {
               var thisDeviceId = device.MyQDeviceId;
               var thisDoorName = "Unknown";
               var thisDoorState = 2;
@@ -145,7 +145,7 @@ LiftMasterAccessory.prototype = {
         // If we have multiple found doors, refuse to proceed
         if (foundDoors.length > 1) {
           that.log("WARNING: You have multiple doors on your Assurelink account.");
-          that.log("WARNING: Specify the ID of the door you want to control using the 'requiredDeviceId' property in your config.json file.");
+          that.log("WARNING: Specify the ID of the door you want to control using the 'DeviceID' property in your config.json file.");
           that.log("WARNING: You can have multiple Assurelink accessories to cover your multiple doors");
 
           for (var j = 0; j < foundDoors.length; j++) {
